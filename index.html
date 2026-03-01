@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMPS Portal - KGF Style Launch</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* SMPS Brand Colors + KGF Gold */
+            --smps-blue: #0072bc;
+            --smps-orange: #f58220;
+            --smps-green: #8dc63f;
+            --smps-gold: #ffcc00;
+            --kgf-gold: linear-gradient(to bottom, #bf953f, #fcf6ba, #b38728, #fcf6ba, #aa771c);
+            --smps-dark: #050505;
+            --smps-white: #ffffff;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--smps-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--smps-white);
+        }
+
+        /* Curtain Reveal System */
+        .curtain-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .curtain-half {
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d0d0f 0%, #171719 100%);
+            transition: transform 1.8s cubic-bezier(0.85, 0, 0.15, 1);
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            position: relative;
+        }
+
+        .curtain-left {
+            justify-content: flex-end;
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .curtain-right {
+            justify-content: flex-start;
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .curtain-opened .curtain-left {
+            transform: translateX(-100%);
+        }
+
+        .curtain-opened .curtain-right {
+            transform: translateX(100%);
+        }
+
+        .logo-center {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            z-index: 1100;
+            transition: opacity 0.6s ease, transform 0.9s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .curtain-opened .logo-center {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.4);
+        }
+
+        .curtain-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--smps-blue);
+            letter-spacing: 1.5rem;
+            margin-top: 2rem;
+            text-shadow: 0 0 30px rgba(0, 114, 188, 0.4);
+        }
+
+        /* Launch Button */
+        #launch-btn {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1200;
+            padding: 1.2rem 4rem;
+            background: linear-gradient(45deg, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            background-size: 200% auto;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s ease;
+            pointer-events: auto;
+            animation: pulse-border 2s infinite;
+        }
+
+        #launch-btn:hover {
+            background-position: right center;
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 114, 188, 0.6);
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 0 0 rgba(245, 130, 32, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(245, 130, 32, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(245, 130, 32, 0);
+            }
+        }
+
+        /* Stage Area */
+        #stage {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            z-index: 10;
+        }
+
+        #timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8rem;
+            color: white;
+            margin-bottom: 2rem;
+            opacity: 0;
+            text-shadow: 0 0 50px var(--smps-blue);
+        }
+
+        /* KGF STYLE TITLE */
+        .kgf-title-container {
+            display: none;
+            text-align: center;
+            perspective: 1000px;
+        }
+
+        .kgf-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 6rem;
+            font-weight: 900;
+            background: var(--kgf-gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 0.5rem;
+            position: relative;
+            opacity: 0;
+            filter: drop-shadow(0 0 20px rgba(179, 135, 40, 0.8));
+            transform: translateZ(500px) scale(3);
+        }
+
+        .kgf-text::after {
+            content: "SMPS TECH LABS.";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(110deg, transparent 40%, rgba(255, 255, 255, 0.8) 50%, transparent 60%);
+            -webkit-background-clip: text;
+            background-size: 200% 100%;
+            animation: shine 3s infinite linear;
+            pointer-events: none;
+        }
+
+        @keyframes shine {
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
+        }
+
+        .kgf-impact {
+            animation: kgfImpact 0.6s cubic-bezier(0.1, 0.9, 0.2, 1) forwards;
+        }
+
+        @keyframes kgfImpact {
+            0% {
+                opacity: 0;
+                transform: translateZ(500px) scale(3);
+                filter: blur(20px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateZ(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        /* Screen Shake */
+        .shake {
+            animation: shakeScreen 0.4s ease-out;
+        }
+
+        @keyframes shakeScreen {
+            0% {
+                transform: translate(0, 0);
+            }
+
+            10% {
+                transform: translate(-10px, -10px);
+            }
+
+            20% {
+                transform: translate(10px, 10px);
+            }
+
+            30% {
+                transform: translate(-10px, 10px);
+            }
+
+            40% {
+                transform: translate(10px, -10px);
+            }
+
+            50% {
+                transform: translate(-10px, -10px);
+            }
+
+            100% {
+                transform: translate(0, 0);
+            }
+        }
+
+        /* Particles / Dust Effect */
+        #dust-canvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 2s ease;
+        }
+
+        /* Real Portal Container */
+        #portal-viewport {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            display: none;
+            opacity: 0;
+            z-index: 50;
+            transition: opacity 1.5s ease;
+        }
+
+        #portal-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Congratulations UI */
+        #congo-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .congo-card {
+            background: #fff;
+            padding: 4rem 6rem;
+            border-radius: 2rem;
+            box-shadow: 0 50px 150px -20px rgba(0, 0, 0, 0.4);
+            text-align: center;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        #congo-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #congo-overlay.show .congo-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .congo-card h1 {
+            color: #111;
+            font-size: 5rem;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .gradient-line {
+            height: 6px;
+            width: 120px;
+            background: linear-gradient(to right, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            margin: 1rem auto 2rem;
+            border-radius: 10px;
+        }
+
+        .intern-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--smps-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.6rem;
+            margin-bottom: 3rem;
+        }
+
+        .done-btn {
+            padding: 1.2rem 5rem;
+            background: linear-gradient(45deg, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            color: white;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .done-btn:hover {
+            transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        /* SVG Atomic Rotation */
+        .ring {
+            transform-origin: center;
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body id="main-body">
+
+    <canvas id="dust-canvas"></canvas>
+
+    <!-- Curtain Reveal Overlay -->
+    <div id="curtain-wrapper" class="curtain-container">
+        <div class="curtain-half curtain-left"></div>
+        <div class="logo-center">
+            <svg width="200" height="200" viewBox="0 0 100 100">
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-orange)" stroke-width="2"
+                    class="ring" style="transform: rotate(0deg);" />
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-green)" stroke-width="2"
+                    class="ring" style="transform: rotate(60deg);" />
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-blue)" stroke-width="2"
+                    class="ring" style="transform: rotate(-60deg);" />
+                <path d="M42 35 L58 35 L40 50 L60 50 L38 65 L58 65" stroke="var(--smps-orange)" stroke-width="6"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <circle cx="96" cy="50" r="3" fill="var(--smps-orange)" />
+                <circle cx="4" cy="50" r="3" fill="var(--smps-blue)" />
+            </svg>
+            <div class="curtain-title">SMPS</div>
+        </div>
+        <div class="curtain-half curtain-right"></div>
+        <button id="launch-btn">Initialize System</button>
+    </div>
+
+    <!-- Background Sequence Area -->
+    <div id="stage">
+        <div id="timer">5</div>
+        <div class="kgf-title-container" id="kgf-container">
+            <h1 class="kgf-text" id="kgf-text">SMPS TECH LABS.</h1>
+        </div>
+    </div>
+
+    <!-- The actual home.html Portal -->
+    <div id="portal-viewport">
+        <iframe id="portal-frame" src="home.html"></iframe>
+
+        <!-- Congo Overlay -->
+        <div id="congo-overlay">
+            <div class="congo-card">
+                <h1>CONGO!</h1>
+                <div class="gradient-line"></div>
+                <p class="intern-text">SMPS INTERNS</p>
+                <button class="done-btn" id="done-btn">DONE</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const launchBtn = document.getElementById('launch-btn');
+        const curtainWrapper = document.getElementById('curtain-wrapper');
+        const stage = document.getElementById('stage');
+        const timerEl = document.getElementById('timer');
+        const kgfContainer = document.getElementById('kgf-container');
+        const kgfText = document.getElementById('kgf-text');
+        const portalViewport = document.getElementById('portal-viewport');
+        const congoOverlay = document.getElementById('congo-overlay');
+        const doneBtn = document.getElementById('done-btn');
+        const body = document.getElementById('main-body');
+
+        // Dust Particle Logic
+        const canvas = document.getElementById('dust-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function initDust() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            particles = [];
+            for (let i = 0; i < 100; i++) {
+                particles.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: (Math.random() - 0.5) * 2,
+                    size: Math.random() * 3
+                });
+            }
+        }
+
+        function animateDust() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(255, 204, 0, 0.3)';
+            particles.forEach(p => {
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                ctx.fill();
+            });
+            requestAnimationFrame(animateDust);
+        }
+
+        launchBtn.addEventListener('click', () => {
+            curtainWrapper.classList.add('curtain-opened');
+            launchBtn.style.opacity = '0';
+            setTimeout(() => launchBtn.style.display = 'none', 600);
+
+            stage.style.opacity = '1';
+            initDust();
+            animateDust();
+
+            let timeLeft = 5;
+            timerEl.style.opacity = '1';
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    triggerKGFReveal();
+                }
+            }, 1000);
+        });
+
+        function triggerKGFReveal() {
+            timerEl.style.opacity = '0';
+
+            setTimeout(() => {
+                timerEl.style.display = 'none';
+                kgfContainer.style.display = 'block';
+                canvas.style.opacity = '1';
+
+                // Slam effect
+                kgfText.classList.add('kgf-impact');
+                body.classList.add('shake');
+
+                // After cinematic reveal
+                setTimeout(() => {
+                    revealPortalDirectly();
+                }, 4000);
+            }, 800);
+        }
+
+        function revealPortalDirectly() {
+            stage.style.opacity = '0';
+            canvas.style.opacity = '0';
+
+            setTimeout(() => {
+                stage.style.display = 'none';
+                portalViewport.style.display = 'block';
+                void portalViewport.offsetWidth;
+                portalViewport.style.opacity = '1';
+
+                setTimeout(() => {
+                    congoOverlay.classList.add('show');
+                }, 1000);
+            }, 800);
+        }
+
+        doneBtn.addEventListener('click', () => {
+            congoOverlay.classList.remove('show');
+            setTimeout(() => {
+                congoOverlay.style.display = 'none';
+            }, 1000);
+        });
+
+        window.addEventListener('resize', initDust);
+    </script>
+</body>
+
+</html>

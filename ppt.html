@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMPS Portal - Cinematic Blue Launch</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* SMPS Brand Colors */
+            --smps-blue: #0072bc;
+            --smps-blue-light: #3b82f6;
+            --smps-blue-dark: #001f3f;
+            --smps-orange: #f58220;
+            --smps-green: #8dc63f;
+            --smps-white: #ffffff;
+            --smps-light-bg: #fdfdfd;
+            --smps-dark-text: #1a1a1a;
+
+            /* Cinematic Blue Gradient for Curtains */
+            --curtain-bg: linear-gradient(135deg, #002B5B 0%, #000a1a 100%);
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--smps-white);
+            font-family: 'Inter', sans-serif;
+            color: var(--smps-dark-text);
+        }
+
+        /* Fantastic Real-Style Blue Curtain System */
+        .curtain-container {
+            position: fixed;
+            inset: 0;
+            z-index: 1000;
+            display: flex;
+            pointer-events: none;
+        }
+
+        .curtain-half {
+            width: 50%;
+            height: 100%;
+            background: var(--curtain-bg);
+            /* Slower, more organic cubic-bezier for fabric movement */
+            transition: transform 2.2s cubic-bezier(0.45, 0.05, 0.55, 0.95), opacity 1.5s ease;
+            pointer-events: auto;
+            display: flex;
+            align-items: center;
+            position: relative;
+            /* Added vertical highlights to simulate folds */
+            background-image:
+                linear-gradient(90deg,
+                    rgba(0, 0, 0, 0) 0%,
+                    rgba(255, 255, 255, 0.05) 25%,
+                    rgba(0, 0, 0, 0.1) 50%,
+                    rgba(255, 255, 255, 0.05) 75%,
+                    rgba(0, 0, 0, 0) 100%),
+                var(--curtain-bg);
+            background-size: 100px 100%, 100% 100%;
+        }
+
+        .curtain-left {
+            justify-content: flex-end;
+            border-right: 1px solid rgba(59, 130, 246, 0.3);
+            transform-origin: left center;
+            /* Gather to the left wall */
+        }
+
+        .curtain-right {
+            justify-content: flex-start;
+            border-left: 1px solid rgba(59, 130, 246, 0.3);
+            transform-origin: right center;
+            /* Gather to the right wall */
+        }
+
+        /* The "Real Curtain" opening effect: scaling horizontally to zero */
+        .curtain-opened .curtain-left {
+            transform: scaleX(0);
+            opacity: 0.8;
+        }
+
+        .curtain-opened .curtain-right {
+            transform: scaleX(0);
+            opacity: 0.8;
+        }
+
+        .logo-center {
+            position: absolute;
+            left: 50%;
+            top: 45%;
+            transform: translate(-50%, -50%);
+            z-index: 1100;
+            transition: opacity 0.6s ease, transform 0.9s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .curtain-opened .logo-center {
+            opacity: 0;
+            transform: translate(-50%, -50%) scale(1.4);
+        }
+
+        .curtain-title {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 5rem;
+            font-weight: 700;
+            color: var(--smps-white);
+            letter-spacing: 1.5rem;
+            margin-top: 2rem;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.8);
+        }
+
+        /* Launch Button */
+        #launch-btn {
+            position: absolute;
+            bottom: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1200;
+            padding: 1.2rem 4rem;
+            background: linear-gradient(45deg, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            background-size: 200% auto;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            transition: all 0.4s ease;
+            pointer-events: auto;
+            animation: pulse-border 2s infinite;
+        }
+
+        #launch-btn:hover {
+            background-position: right center;
+            transform: translateX(-50%) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes pulse-border {
+            0% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4);
+            }
+
+            70% {
+                box-shadow: 0 0 0 20px rgba(59, 130, 246, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(59, 130, 246, 0);
+            }
+        }
+
+        /* Sequence Area */
+        #stage {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 1.2s ease;
+            z-index: 10;
+        }
+
+        #timer {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 8rem;
+            color: var(--smps-blue);
+            margin-bottom: 2rem;
+            opacity: 0;
+            text-shadow: 0 0 30px rgba(0, 114, 188, 0.2);
+        }
+
+        /* CINEMATIC BLUE WRITING */
+        .kgf-container {
+            display: none;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .kgf-svg {
+            width: 100%;
+            height: auto;
+            overflow: visible;
+        }
+
+        .kgf-letter {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 80px;
+            font-weight: 900;
+            fill: none;
+            stroke: var(--smps-blue);
+            stroke-width: 1.5;
+            stroke-dasharray: 1200;
+            stroke-dashoffset: 1200;
+            filter: drop-shadow(0 0 5px rgba(0, 114, 188, 0.4));
+        }
+
+        .kgf-letter.writing {
+            animation: writeLetter 4s forwards, glowPulse 2s infinite alternate;
+        }
+
+        .kgf-letter.fill-blue {
+            fill: url(#blueGrad);
+            stroke: none;
+            transition: fill 1.5s ease;
+        }
+
+        @keyframes writeLetter {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        @keyframes glowPulse {
+            from {
+                filter: drop-shadow(0 0 5px rgba(0, 114, 188, 0.6));
+            }
+
+            to {
+                filter: drop-shadow(0 0 25px rgba(59, 130, 246, 0.9)) brightness(1.2);
+            }
+        }
+
+        /* Real Portal Container */
+        #portal-viewport {
+            position: fixed;
+            inset: 0;
+            background: #fff;
+            display: none;
+            opacity: 0;
+            z-index: 50;
+            transition: opacity 1.5s ease;
+        }
+
+        #portal-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+
+        /* Congratulations UI */
+        #congo-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.8s ease;
+        }
+
+        .congo-card {
+            background: #fff;
+            padding: 4rem 6rem;
+            border-radius: 2rem;
+            box-shadow: 0 40px 120px rgba(0, 0, 0, 0.12);
+            text-align: center;
+            transform: scale(0.8) translateY(20px);
+            transition: all 0.9s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        #congo-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #congo-overlay.show .congo-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .congo-card h1 {
+            color: var(--smps-dark-text);
+            font-size: 5rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -2px;
+        }
+
+        .gradient-line {
+            height: 6px;
+            width: 140px;
+            background: linear-gradient(to right, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            margin: 1.5rem auto 2.5rem;
+            border-radius: 10px;
+        }
+
+        .intern-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--smps-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.6rem;
+            margin-bottom: 3.5rem;
+        }
+
+        .done-btn {
+            padding: 1.4rem 6rem;
+            background: linear-gradient(45deg, var(--smps-orange), var(--smps-green), var(--smps-blue));
+            color: white;
+            border: none;
+            border-radius: 60px;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: bold;
+            font-size: 1.4rem;
+            cursor: pointer;
+            transition: 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 30px rgba(0, 114, 188, 0.2);
+        }
+
+        .done-btn:hover {
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 20px 50px rgba(0, 114, 188, 0.4);
+            filter: brightness(1.1);
+        }
+
+        /* SVG Atomic Rotation */
+        .ring {
+            transform-origin: center;
+            animation: spin 8s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body id="main-body">
+
+    <!-- Curtain Reveal Overlay -->
+    <div id="curtain-wrapper" class="curtain-container">
+        <div class="curtain-half curtain-left"></div>
+        <div class="logo-center">
+            <svg width="200" height="200" viewBox="0 0 100 100">
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-orange)" stroke-width="2"
+                    class="ring" style="transform: rotate(0deg);" />
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-green)" stroke-width="2"
+                    class="ring" style="transform: rotate(60deg);" />
+                <ellipse cx="50" cy="50" rx="46" ry="16" fill="none" stroke="var(--smps-blue-light)" stroke-width="2"
+                    class="ring" style="transform: rotate(-60deg);" />
+                <path d="M42 35 L58 35 L40 50 L60 50 L38 65 L58 65" stroke="var(--smps-orange)" stroke-width="6"
+                    stroke-linecap="round" stroke-linejoin="round" fill="none" />
+                <circle cx="96" cy="50" r="3" fill="var(--smps-orange)" />
+                <circle cx="4" cy="50" r="3" fill="var(--smps-blue-light)" />
+            </svg>
+            <div class="curtain-title">SMPS</div>
+        </div>
+        <div class="curtain-half curtain-right"></div>
+        <button id="launch-btn">Initialize System</button>
+    </div>
+
+    <!-- Background Sequence Area -->
+    <div id="stage">
+        <div id="timer">5</div>
+
+        <!-- CINEMATIC BLUE WRITING CONTAINER -->
+        <div class="kgf-container" id="kgf-box">
+            <svg class="kgf-svg" viewBox="0 0 900 150">
+                <defs>
+                    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#0072bc;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#1e3a8a;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <text x="50%" y="80" text-anchor="middle" id="kgf-text-path"></text>
+            </svg>
+        </div>
+    </div>
+
+    <!-- The actual home.html Portal -->
+    <div id="portal-viewport">
+        <iframe id="portal-frame" src="home.html"></iframe>
+
+        <!-- Congo Overlay -->
+        <div id="congo-overlay">
+            <div class="congo-card">
+                <h1>CONGO!</h1>
+                <div class="gradient-line"></div>
+                <p class="intern-text">SMPS INTERNS</p>
+                <a href="https://smps-student-portal.vercel.app/" class="done-btn" id="done-btn">DONE</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const launchBtn = document.getElementById('launch-btn');
+        const curtainWrapper = document.getElementById('curtain-wrapper');
+        const stage = document.getElementById('stage');
+        const timerEl = document.getElementById('timer');
+        const kgfBox = document.getElementById('kgf-box');
+        const kgfTextPath = document.getElementById('kgf-text-path');
+        const portalViewport = document.getElementById('portal-viewport');
+        const congoOverlay = document.getElementById('congo-overlay');
+        const body = document.getElementById('main-body');
+
+        const TITLE = "SMPS TECH LAB";
+
+        launchBtn.addEventListener('click', () => {
+            curtainWrapper.classList.add('curtain-opened');
+            launchBtn.style.opacity = '0';
+            setTimeout(() => launchBtn.style.display = 'none', 600);
+
+            stage.style.opacity = '1';
+
+            let timeLeft = 5;
+            timerEl.style.opacity = '1';
+
+            const countdown = setInterval(() => {
+                timeLeft--;
+                timerEl.innerText = timeLeft;
+                if (timeLeft <= 0) {
+                    clearInterval(countdown);
+                    triggerKGFWriting();
+                }
+            }, 1000);
+        });
+
+        function triggerKGFWriting() {
+            timerEl.style.opacity = '0';
+
+            setTimeout(() => {
+                timerEl.style.display = 'none';
+                kgfBox.style.display = 'block';
+
+                kgfTextPath.innerHTML = "";
+
+                const chars = TITLE.split("");
+                const DELAY_BETWEEN_LETTERS = 800;
+
+                chars.forEach((char, i) => {
+                    const tspan = document.createElementNS("http://www.w3.org/2000/svg", "tspan");
+                    tspan.textContent = char;
+                    tspan.classList.add("kgf-letter");
+                    kgfTextPath.appendChild(tspan);
+
+                    setTimeout(() => {
+                        tspan.classList.add("writing");
+                    }, i * DELAY_BETWEEN_LETTERS);
+                });
+
+                const totalWritingTime = (chars.length * DELAY_BETWEEN_LETTERS) + 4000;
+
+                setTimeout(() => {
+                    const letters = document.querySelectorAll('.kgf-letter');
+                    letters.forEach(l => l.classList.add('fill-blue'));
+
+                    setTimeout(() => {
+                        revealPortalDirectly();
+                    }, 2500);
+                }, totalWritingTime);
+
+            }, 800);
+        }
+
+        function revealPortalDirectly() {
+            stage.style.opacity = '0';
+
+            setTimeout(() => {
+                stage.style.display = 'none';
+                portalViewport.style.display = 'block';
+                void portalViewport.offsetWidth;
+                portalViewport.style.opacity = '1';
+
+                setTimeout(() => {
+                    congoOverlay.classList.add('show');
+                }, 1000);
+            }, 800);
+        }
+    </script>
+</body>
+
+</html>

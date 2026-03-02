@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMPS Student Portal v6.0 - Bright Presentation</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        :root {
+            --c-primary: #1a56db;
+            --c-bg: #F7F6F3;
+            --c-surface: #FFFFFF;
+            --c-text: #1A1916;
+            --c-text2: #5C5952;
+            --c-border: #E2DDD6;
+            --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--c-bg);
+            font-family: 'DM Sans', sans-serif;
+            color: var(--c-text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #presentation {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform: translateX(50px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 5% 10%;
+            background-color: var(--c-bg);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(0);
+        }
+
+        /* Typography & Components */
+        h1,
+        h2,
+        h3 {
+            font-weight: 700;
+            color: var(--c-text);
+        }
+
+        .slide-title {
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            align-self: flex-start;
+            border-left: 10px solid var(--c-primary);
+            padding-left: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content-area {
+            width: 100%;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            width: 100%;
+            align-items: center;
+        }
+
+        .mockup {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--c-border);
+            background: #fff;
+        }
+
+        .mockup img {
+            width: 100%;
+            display: block;
+            height: auto;
+            min-height: 300px;
+            object-fit: cover;
+        }
+
+        .bullet-list {
+            list-style: none;
+        }
+
+        .bullet-list li {
+            position: relative;
+            padding-left: 55px;
+            margin-bottom: 25px;
+            font-size: 1.2rem;
+            color: var(--c-text2);
+            line-height: 1.4;
+        }
+
+        .bullet-list i {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            color: var(--c-primary);
+            font-size: 1.4rem;
+            background: rgba(26, 86, 219, 0.1);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+        }
+
+        /* Feature Cards */
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+
+        .card {
+            background: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid var(--c-border);
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .card i {
+            font-size: 2.5rem;
+            color: var(--c-primary);
+            margin-bottom: 15px;
+        }
+
+        /* UI Navigation */
+        .nav-ui {
+            position: fixed;
+            bottom: 30px;
+            right: 40px;
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .btn-nav {
+            width: 54px;
+            height: 54px;
+            border-radius: 15px;
+            background: #fff;
+            border: 1px solid var(--c-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: 0.3s;
+        }
+
+        .btn-nav:hover {
+            background: var(--c-primary);
+            color: #fff;
+            border-color: var(--c-primary);
+        }
+
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 6px;
+            background: var(--c-primary);
+            transition: width 0.4s;
+            z-index: 101;
+        }
+
+        .slide-counter {
+            position: fixed;
+            bottom: 35px;
+            left: 40px;
+            font-weight: 700;
+            color: var(--c-text2);
+            font-family: 'DM Mono';
+        }
+
+        /* Portal Specific UI */
+        .launch-btn {
+            padding: 20px 60px;
+            background: var(--c-primary);
+            color: #fff;
+            border-radius: 50px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(26, 86, 219, 0.2);
+            transition: 0.3s;
+        }
+
+        .launch-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px rgba(26, 86, 219, 0.3);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="presentation">
+        <!-- 1: INTRO -->
+        <div class="slide active">
+            <div style="text-align:center">
+                <i class="fas fa-graduation-cap"
+                    style="font-size: 5rem; color: var(--c-primary); margin-bottom: 20px;"></i>
+                <h1 style="font-size: 4.5rem; letter-spacing: -2px;">SMPS STUDENT PORTAL</h1>
+                <p style="font-size: 1.8rem; color: var(--c-text2); margin-bottom: 40px;">Student Management & Progress
+                    System v6.0</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <span
+                        style="background: var(--c-primary); color: white; padding: 10px 25px; border-radius: 50px; font-weight: bold;">v6.0
+                        RELEASE</span>
+                    <span
+                        style="background: #10b981; color: white; padding: 10px 25px; border-radius: 50px; font-weight: bold;">MODERN
+                        ECOSYSTEM</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2: LANDING PAGE -->
+        <div class="slide">
+            <h2 class="slide-title">Portal Gateway</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-rocket"></i> <strong>Hero Section:</strong> Clean, high-conversion
+                                landing page with quick action buttons.</li>
+                            <li><i class="fas fa-th-large"></i> <strong>Feature Grid:</strong> Instant overview of
+                                Attendance, Projects, and Resource tools.</li>
+                            <li><i class="fas fa-external-link-alt"></i> <strong>Multi-Portal Sync:</strong> Direct
+                                access to Mentor, Admin, and MEET sections.</li>
+                        </ul>
+                    </div>
+                    <div class="mockup">
+                        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80"
+                            alt="Landing Page">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3: SECURE LOGIN -->
+        <div class="slide">
+            <h2 class="slide-title">Identity Management</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="mockup">
+                        <img src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=800&q=80"
+                            alt="Login UI">
+                    </div>
+                    <div>
+                        <h3>Encrypted Access</h3>
+                        <p style="margin: 15px 0 30px; color: var(--c-text2);">Secure SRN-based authentication system
+                            with auto-logout features.</p>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-user-lock"></i> Single Sign-On (SSO)</li>
+                            <li><i class="fas fa-shield-virus"></i> CSRF & Session Protection</li>
+                            <li><i class="fas fa-history"></i> Automatic Recovery</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4: INTERACTIVE ONBOARDING -->
+        <div class="slide">
+            <h2 class="slide-title">Guided Tour</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-route"></i> <strong>Dynamic Highlighting:</strong> Automatically guides
+                                users through the interface components.</li>
+                            <li><i class="fas fa-info-circle"></i> <strong>Feature Tooltips:</strong> Context-aware
+                                explanations for dashboards and tools.</li>
+                            <li><i class="fas fa-forward"></i> <strong>Skip & Finish:</strong> User-controlled
+                                onboarding pace.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="border: 2px solid var(--c-primary); text-align: left;">
+                        <div
+                            style="background: var(--c-primary); color: white; padding: 10px; border-radius: 8px; margin-bottom: 15px; font-size: 0.8rem; font-weight: bold;">
+                            Tour Step 1 of 10</div>
+                        <h4 style="margin-bottom: 5px;">Your Profile</h4>
+                        <p style="font-size: 0.9rem; color: var(--c-text2);">Your name, branch, and SRN are shown here
+                            at all times.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5: BENTO DASHBOARD -->
+        <div class="slide">
+            <h2 class="slide-title">The Bento Workspace</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="mockup">
+                        <img src="https://images.unsplash.com/photo-1504868584819-f8e905263543?auto=format&fit=crop&w=800&q=80"
+                            alt="Dashboard UI">
+                    </div>
+                    <div>
+                        <h3>Integrated Hub</h3>
+                        <p style="margin: 15px 0 25px; color: var(--c-text2);">A centralized view merging all critical
+                            data points into a single, responsive layout.</p>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div
+                                style="background: #fff; padding: 15px; border: 1px solid var(--c-border); border-radius: 12px;">
+                                <div style="font-size: 0.7rem; font-weight: bold; color: var(--c-primary);">LIVE TIME
+                                </div>
+                                <div style="font-family: 'DM Mono'; font-weight: bold;">10:30:45 AM</div>
+                            </div>
+                            <div
+                                style="background: #fff; padding: 15px; border: 1px solid var(--c-border); border-radius: 12px;">
+                                <div style="font-size: 0.7rem; font-weight: bold; color: #10b981;">PRESENCE</div>
+                                <div style="font-weight: bold;">Checked In</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6: ATTENDANCE TRACKER -->
+        <div class="slide">
+            <h2 class="slide-title">Presence Analytics</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-circle-notch"></i> <strong>Attendance Ring:</strong> Visual feedback on
+                                90-day cycle completion.</li>
+                            <li><i class="fas fa-file-invoice"></i> <strong>Daily Logs:</strong> Exact Check-In and
+                                Check-Out timestamp tracking.</li>
+                            <li><i class="fas fa-chart-line"></i> <strong>Status Metrics:</strong> Automated
+                                "Good/Average/Low" classification.</li>
+                        </ul>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div
+                            style="width: 120px; height: 120px; border: 8px solid #10b981; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; font-size: 1.8rem; font-weight: 800;">
+                            85%</div>
+                        <h4 style="color: #10b981;">Academic Standing: Good</h4>
+                        <p style="font-size: 0.8rem; color: var(--c-text2); margin-top: 10px;">76 Days Present / 90
+                            Total</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7: ATTENDANCE CALENDAR -->
+        <div class="slide">
+            <h2 class="slide-title">Monthly Visualization</h2>
+            <div class="content-area">
+                <div class="mockup" style="padding: 20px; background: #fff;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                        <h4 style="font-size: 1rem;">February 2026</h4>
+                        <div style="display: flex; gap: 10px;">
+                            <span style="font-size: 0.7rem;"><i class="fas fa-square" style="color: #d1fae5;"></i>
+                                Present</span>
+                            <span style="font-size: 0.7rem;"><i class="fas fa-square" style="color: #fee2e2;"></i>
+                                Absent</span>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px;">
+                        <!-- Mock Calendar Nodes -->
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #fee2e2; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div style="aspect-ratio: 1; background: #d1fae5; border-radius: 4px;"></div>
+                        <div
+                            style="aspect-ratio: 1; border: 2px solid var(--c-primary); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.6rem; font-weight: bold;">
+                            TODAY</div>
+                    </div>
+                </div>
+                <p style="margin-top: 20px; text-align: center; color: var(--c-text2);">Interactive calendar view for
+                    tracking historical presence patterns.</p>
+            </div>
+        </div>
+
+        <!-- 8: LEAVE MANAGEMENT -->
+        <div class="slide">
+            <h2 class="slide-title">Leave System</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="card" style="text-align: left;">
+                        <h4 style="margin-bottom: 15px;">Balance Remaining</h4>
+                        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                            <div
+                                style="flex: 1; background: #f0fdf4; padding: 15px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">5/5</div>
+                                <div style="font-size: 0.7rem; color: #16a34a;">Sick Leaves</div>
+                            </div>
+                            <div
+                                style="flex: 1; background: #eff6ff; padding: 15px; border-radius: 12px; text-align: center;">
+                                <div style="font-size: 1.5rem; font-weight: bold;">2/2</div>
+                                <div style="font-size: 0.7rem; color: var(--c-primary);">Normal Leaves</div>
+                            </div>
+                        </div>
+                        <p style="font-size: 0.8rem; color: var(--c-text2);"><i class="fas fa-info-circle"></i> Applied
+                            via Mentor Approval Workflow.</p>
+                    </div>
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-file-signature"></i> <strong>Request Portal:</strong> Apply for leave
+                                with date range and reason attachments.</li>
+                            <li><i class="fas fa-clock"></i> <strong>History Log:</strong> Track status of pending,
+                                approved, or rejected requests.</li>
+                            <li><i class="fas fa-user-check"></i> <strong>Mentor Sync:</strong> Direct notification to
+                                assigned mentor for fast review.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9: PROJECT MILESTONES -->
+        <div class="slide">
+            <h2 class="slide-title">Milestone Grid</h2>
+            <div class="content-area">
+                <div class="mockup" style="padding: 30px; background: white;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 20px;">
+                        <h4 style="font-size: 1.5rem;">Phase Progression</h4>
+                        <span
+                            style="background: rgba(26, 86, 219, 0.1); color: var(--c-primary); padding: 5px 15px; border-radius: 50px; font-weight: bold;">75%
+                            Score</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(10, 1fr); gap: 10px;">
+                        <div
+                            style="aspect-ratio: 1; background: #10b981; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            1</div>
+                        <div
+                            style="aspect-ratio: 1; background: #10b981; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            2</div>
+                        <div
+                            style="aspect-ratio: 1; background: #f59e0b; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold;">
+                            3</div>
+                        <div style="aspect-ratio: 1; border: 2px solid var(--c-border); border-radius: 8px;"></div>
+                    </div>
+                    <div
+                        style="margin-top: 25px; padding-top: 15px; border-top: 1px solid var(--c-border); display: flex; gap: 10px;">
+                        <input type="text" placeholder="github.com/user/repo"
+                            style="flex: 1; padding: 10px; border: 1px solid var(--c-border); border-radius: 8px; font-size: 0.8rem;"
+                            readonly>
+                        <button
+                            style="background: var(--c-primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold;">Submit
+                            Link</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10: PDF VIEWER INTEGRATION -->
+        <div class="slide">
+            <h2 class="slide-title">Integrated Document Viewer</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-file-pdf"></i> <strong>Native Rendering:</strong> View syllabus and
+                                project guides directly in the portal.</li>
+                            <li><i class="fas fa-search-plus"></i> <strong>Control Panel:</strong> Zoom, Page
+                                Navigation, and Fit-to-Width functionality.</li>
+                            <li><i class="fas fa-cloud-download-alt"></i> <strong>One-Click Access:</strong> No external
+                                software required for PDF reading.</li>
+                        </ul>
+                    </div>
+                    <div class="mockup"
+                        style="background: #404040; display: flex; align-items: center; justify-content: center;">
+                        <div
+                            style="width: 80%; height: 250px; background: white; border-radius: 4px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); display: flex; flex-direction: column;">
+                            <div
+                                style="height: 30px; background: #f1f5f9; border-bottom: 1px solid #ddd; display: flex; align-items: center; padding: 0 10px; gap: 5px;">
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ff5f56;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #ffbd2e;"></div>
+                                <div style="width: 8px; height: 8px; border-radius: 50%; background: #27c93f;"></div>
+                            </div>
+                            <div style="flex: 1; padding: 20px;">
+                                <div style="height: 10px; background: #eee; width: 100%; margin-bottom: 10px;"></div>
+                                <div style="height: 10px; background: #eee; width: 90%; margin-bottom: 10px;"></div>
+                                <div style="height: 10px; background: #eee; width: 95%; margin-bottom: 10px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11: TASK WORKFLOW -->
+        <div class="slide">
+            <h2 class="slide-title">Task Management</h2>
+            <div class="content-area">
+                <div class="feature-grid">
+                    <div class="card" style="border-left: 5px solid #f59e0b;">
+                        <i class="fas fa-clipboard-list" style="color: #f59e0b;"></i>
+                        <h4>Assigned</h4>
+                        <p style="font-size: 0.8rem;">New tasks pushed by Mentor/Admin.</p>
+                    </div>
+                    <div class="card" style="border-left: 5px solid var(--c-primary);">
+                        <i class="fas fa-file-upload"></i>
+                        <h4>Submission</h4>
+                        <p style="font-size: 0.8rem;">Deliver links & files for review.</p>
+                    </div>
+                    <div class="card" style="border-left: 5px solid #10b981;">
+                        <i class="fas fa-check-circle" style="color: #10b981;"></i>
+                        <h4>Approved</h4>
+                        <p style="font-size: 0.8rem;">Final status with mentor feedback.</p>
+                    </div>
+                </div>
+                <p style="margin-top: 30px; text-align: center; color: var(--c-text2);">Closed-loop workflow: Accept →
+                    Submit → Review → Result.</p>
+            </div>
+        </div>
+
+        <!-- 12: NOTIFICATION CENTER -->
+        <div class="slide">
+            <h2 class="slide-title">Communication Feed</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="card" style="text-align: left; padding: 20px;">
+                        <div
+                            style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--c-border); padding-bottom: 10px; margin-bottom: 15px;">
+                            <h4 style="font-size: 0.9rem;"><i class="fas fa-bell"></i> Notifications</h4>
+                            <span
+                                style="background: var(--c-primary); color: white; width: 18px; height: 18px; border-radius: 50%; font-size: 0.6rem; display: flex; align-items: center; justify-content: center;">2</span>
+                        </div>
+                        <div
+                            style="margin-bottom: 10px; padding: 10px; background: rgba(26, 86, 219, 0.05); border-radius: 8px;">
+                            <div style="font-weight: bold; font-size: 0.8rem;">Mentor: Deadline Alert</div>
+                            <div style="font-size: 0.7rem; color: var(--c-text2);">Submit Phase 2 by Friday...</div>
+                        </div>
+                        <div style="padding: 10px; background: rgba(124, 58, 237, 0.05); border-radius: 8px;">
+                            <div style="font-weight: bold; font-size: 0.8rem;">Admin: Holiday Notice</div>
+                            <div style="font-size: 0.7rem; color: var(--c-text2);">Portal maintenance scheduled...</div>
+                        </div>
+                    </div>
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-user-graduate"></i> <strong>Mentor Broadcasts:</strong> Direct alerts
+                                for project updates and reviews.</li>
+                            <li><i class="fas fa-bullhorn"></i> <strong>Admin Announcements:</strong> Global notices and
+                                system maintenance.</li>
+                            <li><i class="fas fa-dot-circle"></i> <strong>Live Badging:</strong> Unread dots in sidebar
+                                for instant awareness.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 13: RESOURCE LIBRARY -->
+        <div class="slide">
+            <h2 class="slide-title">The Vault</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div class="mockup">
+                        <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=800&q=80"
+                            alt="Resources">
+                    </div>
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-filter"></i> <strong>Smart Filtering:</strong> Categorized access to
+                                Syllabus, Notes, and Past Papers.</li>
+                            <li><i class="fas fa-folder-open"></i> <strong>Central Repository:</strong> Single source of
+                                truth for all module materials.</li>
+                            <li><i class="fas fa-cloud-download-alt"></i> <strong>Offline Access:</strong> Linked assets
+                                for university reference materials.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14: SMPS MEET -->
+        <div class="slide">
+            <h2 class="slide-title">SMPS Meet</h2>
+            <div class="content-area">
+                <div class="two-column">
+                    <div>
+                        <ul class="bullet-list">
+                            <li><i class="fas fa-video"></i> <strong>Secure MEET:</strong> Integrated video portal for
+                                1-on-1 mentor labs.</li>
+                            <li><i class="fas fa-users-viewfinder"></i> <strong>Screen Sharing:</strong> Built-in tool
+                                for live coding and review sessions.</li>
+                            <li><i class="fas fa-calendar-check"></i> <strong>Session Logs:</strong> Integrated meeting
+                                history and scheduling.</li>
+                        </ul>
+                    </div>
+                    <div class="mockup">
+                        <img src="https://images.unsplash.com/photo-1588196749597-9ff075ee6b5b?auto=format&fit=crop&w=800&q=80"
+                            alt="Video Call UI">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15: CLOSING -->
+        <div class="slide">
+            <div style="text-align:center">
+                <h2 style="font-size:5rem; color:var(--c-primary); margin-bottom:20px">Ready to Login?</h2>
+                <p style="font-size:1.5rem; color:var(--c-text2); max-width: 800px; margin: 30px auto;">Experience the
+                    full power of SMPS Student Portal v6.0 today.</p>
+                <div style="margin-top: 50px;">
+                    <a href="ppt.html" class="launch-btn">LAUNCH PORTAL</a>
+                </div>
+                <p style="margin-top: 80px; color: var(--c-text2); font-size: 0.9rem;">© 2024 SMPS TECH LAB • DESIGNED
+                    FOR EXCELLENCE</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- UI ELEMENTS -->
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="slide-counter" id="slideCount">1 / 15</div>
+
+    <div class="nav-ui">
+        <button class="btn-nav" id="btnPrev"><i class="fas fa-arrow-left"></i></button>
+        <button class="btn-nav" id="btnNext"><i class="fas fa-arrow-right"></i></button>
+    </div>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const btnPrev = document.getElementById('btnPrev');
+        const btnNext = document.getElementById('btnNext');
+        const bar = document.getElementById('progressBar');
+        const counter = document.getElementById('slideCount');
+
+        let currentIdx = 0;
+
+        function updateDisplay() {
+            slides.forEach((s, i) => s.classList.toggle('active', i === currentIdx));
+            bar.style.width = `${((currentIdx + 1) / slides.length) * 100}%`;
+            counter.innerText = `${currentIdx + 1} / ${slides.length}`;
+
+            btnPrev.style.opacity = currentIdx === 0 ? '0.3' : '1';
+            btnNext.style.opacity = currentIdx === slides.length - 1 ? '0.3' : '1';
+        }
+
+        function next() { if (currentIdx < slides.length - 1) { currentIdx++; updateDisplay(); } }
+        function prev() { if (currentIdx > 0) { currentIdx--; updateDisplay(); } }
+
+        btnNext.onclick = next;
+        btnPrev.onclick = prev;
+
+        document.onkeydown = (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') next();
+            if (e.key === 'ArrowLeft') prev();
+        };
+
+        updateDisplay();
+    </script>
+</body>
+
+</html>
